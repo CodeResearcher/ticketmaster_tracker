@@ -1,0 +1,7 @@
+**/
+*.csv
+*.txt
+*.html
+ToDos.md
+config.json
+picks.json

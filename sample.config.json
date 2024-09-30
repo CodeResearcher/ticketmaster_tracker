@@ -1,0 +1,41 @@
+{
+    "firefox_executable": "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe",
+    "selenium": "",
+    "cookies": "",
+    "headers": [
+        {"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"},
+        {"Accept-Language": "de-DE,de;q=0.9"},
+        {"Cache-Control": "no-cache"},
+        {"DNT": "1"},
+        {"Pragma": "no-cache"},
+        {"Priority": "u=0, i"},
+        {"Sec-CH-UA": "Chromium;v=128,Not;A=Brand;v=24,Google Chrome;v=128"},
+        {"Sec-CH-UA-Mobile": "?0"},
+        {"Sec-CH-UA-Platform": "Windows"},
+        {"Sec-Fetch-Dest": "document"},
+        {"Sec-Fetch-Mode": "navigate"},
+        {"Sec-Fetch-Site": "same-origin"},
+        {"Upgrade-Insecure-Requests": "1"},
+        {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"}
+    ],
+    "domain": ".ticketmaster.co.uk",
+    "api_path": "/api/quickpicks/",
+    "primary_events": [
+       "23006130DAB40C0B",
+       "23006130DBA60C0D"
+    ],
+    "secondary_events": [
+        "23006130DCBE0C15",
+        "23006130DD430C17",
+        "23006130DDEE0C19",
+        "23006130DEA90C1B",
+        "23006138F7940C63",
+        "230061380CE90C78",
+        "2300613983E4096B",
+        "2300613810570C7A"
+    ],
+    "method": "list?resale=true&qty=1&offset=0&limit=100&sort=price",
+    "request_delay": 30,
+    "refresh_delay": 15,
+    "picks_list": "picks.json"
+}
