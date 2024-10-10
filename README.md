@@ -4,8 +4,9 @@ track availability of tickets for events from ticketmaster.co.uk
 1. open new tab for ticketmaster.co.uk in running Mozilla Firefox instance
 2. retrieve ticketmaster.co.uk cookies from running instance
 3. call Ticketmaster API
-4. write response to /logs/<event_id>.csv
-5. when cookies expire after about 15 Minutes, start from beginning
+4. write response to /logs/tracking_history.csv and /logs/tracking_history.jsonl
+5. if ticket is available, response with ticket details will be written to /logs/picks.json
+6. when cookies expire after about 15 Minutes, start from beginning
 
 # Requirements
 
@@ -27,6 +28,8 @@ API to retrieve  list of available tickets of an event
 |----|-----|-----------|
 |EVENT_ID|23006130DAB40C0B|ID of  Event|
 
+### How to get Event ID
+
 ## GET Parameters
 
 |Name|Value|Description|
@@ -42,7 +45,7 @@ API to retrieve  list of available tickets of an event
 
 ## Request Headers
 
-see [sample.config.json](sample.config.json)
+see [sample.config.json](samples/sample.config.json)
 
 ## Cookies
 
@@ -134,11 +137,86 @@ see [sample.config.json](sample.config.json)
 - identity.ticketmaster.co.uk
 - help.ticketmaster.co.uk
 
-# CSV Schema
+# Schema tracking_history.csv
 
-|quantity|total|picks|descriptions|status|time|date|
-|--------|-----|-----|------------|------|----|----|
-|0|0|[]|[]|200|23:59:59|01.01.2024|
+uses [CSV Format](https://datatracker.ietf.org/doc/html/rfc4180)
+
+each line represents the availability at the given time
+
+**Sample:**
+|quantity|total|picks|descriptions|status|eventId|time|date|
+|--------|-----|-----|------------|------|-------|----|----|
+|0|0|[]|[]|200|23006130DAB40C0B|23:59:59|01.01.2024|
+
+# Schema tracking_history.jsonl
+
+uses [JSON Lines Format](https://jsonlines.org/)
+
+each line represents the availability at the given time
+
+**Sample:**
+```
+{"quantity": 0, "total": 0, "picks": [], "descriptions": [], "status": 200, "eventId": "23006130DAB40C0B", "isoDate": "2024-01-01T23:59:59.999999"}
+```
+
+# Schema picks.json
+
+uses [JSON Format](https://datatracker.ietf.org/doc/html/rfc8259)
+
+each object represents unique available pick for a single event at the given time
+
+**Sample:**
+```
+{
+	"picks": [
+		{
+            "id": "lwchvgnt4",
+            "type": "general-seating",
+            "section": "PITCH",
+            "originalPrice": 395.42,
+            "description": "",
+            "areaName": "",
+            "placeDescriptionId": "IE5DCNJMHE",
+            "hasSpecialDescription": false,
+            "offerIds": [
+                "HF6GY53DNB3GO3TUGQ"
+            ],
+            "snapshotImageUrl": "image?systemId=HOST_UK&segmentIds=s_168",
+            "quality": 0.97235,
+            "sellerBusinessType": "private",
+            "resaleListingId": "lwchvgnt4",
+            "sellerAffiliationType": "unaffiliated",
+            "attributes": [],
+            "eventId": "23006130DAB40C0B",
+            "isoDate": "2024-01-01T23:59:59.999999"
+        },
+        {
+            "id": "lwhdbh7jv",
+            "type": "seat",
+            "section": "120",
+            "row": "24",
+            "seatFrom": "243",
+            "seatTo": "244",
+            "originalPrice": 540.18,
+            "description": "Level 1",
+            "areaName": "L1",
+            "placeDescriptionId": "IE5DCNRMHE",
+            "hasSpecialDescription": false,
+            "offerIds": [
+                "HF6GY53IMRRGQN3KOY"
+            ],
+            "snapshotImageUrl": "image?systemId=HOST_UK&sectionNames=120&placeId=GEZDAORSGQ5DENBU",
+            "quality": 0.88172,
+            "sellerBusinessType": "private",
+            "resaleListingId": "lwhdbh7jv",
+            "sellerAffiliationType": "unaffiliated",
+            "attributes": [],
+            "eventId": "23006130DAB40C0B",
+            "isoDate": "2024-01-01T23:59:59.999999"
+        }
+	]
+}
+```
 
 # Configuration
 
@@ -148,21 +226,48 @@ create config.json with following attributes:
 |----|-----------|----------------|
 |firefox_executable|absolute path to Mozialla Firefox executable|n/a|
 |selenium|NOT IMPLEMENTED YET!|chrome, firefox|
-|cookies|Cookie String or cookies.txt File, if empty Cookie from running Firefox instance will be used||
-|headers|Array of required Request Headers|see sample.config.json|
+|cookies|Cookie String or cookies.txt File, if empty Cookie from running Firefox instance will be used|String: "eps_sid=XXX; BID=XXX; reese84=XXX; SID=XXX; sticky=XXX", File: [sample.cookies.txt](sample/sample.cookies.txt)|
+|headers|Array of required Request Headers|see [sample.config.json](sample/sample.config.json)|
 |domain|Ticketmaster domain|.ticketmaster.co.uk|
 |api_path|API path|/api/quickpicks/|
-|primary_events|Array of Event IDs which will be tracked|see sample.config.json|
-|secondary_events|Array of Event IDs which will be used if primary Event fails|see sample.config.json|
+|primary_events|Array of Event IDs which will be tracked|see [sample.config.json](sample/sample.config.json)|
+|secondary_events|Array of Event IDs which will be used if primary Event fails|see [sample.config.json](sample/sample.config.json)|
 |method|API method incl. query parameters|list?resale=true&qty=1&offset=0&limit=100&sort=price|
 |request_delay|delay between requests (in seconds)|30|
 |refresh_delay|delay until new loaded cookies will be used (in seconds)|15|
 |picks_list|JSON Array with all found tickets|picks.json|
-|response_sample|load API response sample for testing|list.json|
+|response_sample|load API response sample for testing|see [list_ticket.json](samples/list_ticket.json)|
 
-for sample values see [sample.config.json](sample.config.json)
+for further sample values see [sample.config.json](sample/sample.config.json)
+
+# Console Output
+
+![console output](samples/console_output_sample.PNG)
+
+**Line 1:** Execution Time (hh:mm:ss) HTTP Status \
+**Line 2:** Current Event ID \
+**Line 3:** Number for Events which returned HTTP 503 or 504 \
+**Line 4 - 12:** Table of used Cookies including Name, Expiration (hh:mm:ss dd.MM.YYYY) and Domain \
+**Last Line:** Countdown until the Execution continues
+
+# Testing
+
+## Scripts
+
+[curl.bat](testing/curl.bat) - basic cURL command of sample request from Chrome Dev Tools
+
+[request_session.py](testing/request_session.py) - simple Python request sample with hardcoded headers and cookies
+
+## Load Response Sample
+
+## Load Cookie String
+
+## Load cookies.txt
 
 # To-Dos
 
 - implement headless browser
-- write results to to SQLite
+  - selenium
+  - playwright
+- write results to SQLite
+- add UI to view results
