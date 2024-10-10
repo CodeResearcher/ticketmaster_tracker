@@ -1,7 +1,11 @@
-**/
+/.venv
+/.vscode
+/logs
+/powershell
+*.jsonl
 *.csv
-*.txt
 *.html
 ToDos.md
+cookies.txt
 config.json
 picks.json
