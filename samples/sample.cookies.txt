@@ -1,0 +1,9 @@
+# Netscape HTTP Cookie File
+# https://curl.haxx.se/rfc/cookie_spec.html
+# This is a generated file! Do not edit.
+
+.ticketmaster.co.uk	TRUE	/	FALSE	1729695496	eps_sid	XXX
+.ticketmaster.co.uk	TRUE	/	FALSE	0	language XXX
+.ticketmaster.co.uk	TRUE	/	FALSE	2145916801	BID	XXX
+.ticketmaster.co.uk	TRUE	/	FALSE	0	sticky	ACAB
+.ticketmaster.co.uk	TRUE	/	FALSE	1729738354	reese84	XXX
