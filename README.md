@@ -235,7 +235,7 @@ create config.json with following attributes:
 |method|API method incl. query parameters|list?resale=true&qty=1&offset=0&limit=100&sort=price|
 |request_delay|delay between requests (in seconds)|30|
 |refresh_delay|delay until new loaded cookies will be used (in seconds)|15|
-|picks_list|JSON Array with all found tickets|picks.json|
+|price_limit|price limit for ticket alert|e.g. 500.00|
 |response_sample|load API response sample for testing|see [list_ticket.json](samples/list_ticket.json)|
 
 for further sample values see [sample.config.json](sample/sample.config.json)
@@ -266,8 +266,10 @@ for further sample values see [sample.config.json](sample/sample.config.json)
 
 # To-Dos
 
+- log cookies
+- bypass queue
+- add to basket
 - implement headless browser
   - selenium
   - playwright
-- write results to SQLite
 - add UI to view results

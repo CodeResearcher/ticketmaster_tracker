@@ -37,5 +37,5 @@
     "method": "list?resale=true&qty=1&offset=0&limit=100&sort=price",
     "request_delay": 30,
     "refresh_delay": 15,
-    "picks_list": "picks.json"
+    "price_limit": 500.00
 }
