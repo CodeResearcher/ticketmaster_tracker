@@ -239,7 +239,7 @@ init.sql creates data.db database and all required tables (events, cookies, logs
 
 ## ER Diagram
 
-![database schema](samples/db_schema.PNG)
+![database schema](samples/db_schema.png)
 
 generated with [dbeaver](https://dbeaver.io/)
 
