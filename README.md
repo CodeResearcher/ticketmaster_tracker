@@ -4,15 +4,22 @@ track availability of tickets for events from ticketmaster.co.uk
 1. open new tab for ticketmaster.co.uk in running Mozilla Firefox instance
 2. retrieve ticketmaster.co.uk cookies from running instance
 3. call Ticketmaster API
-4. write response to /logs/tracking_history.csv and /logs/tracking_history.jsonl
+4. write response to /logs/tracking_history.csv, /logs/tracking_history.jsonl and /logs/data.db
 5. if ticket is available, response with ticket details will be written to /logs/picks.json
-6. when cookies expire after about 15 Minutes, start from beginning
+6. if ticket under price limit from config.json is available, alert sound rings and new tab to event pops up
+7. when cookies expire after about 15 Minutes, start from beginning
 
 # Requirements
 
 - Running Mozilla Firefox Instance
 - Python 3
 - [Tab Wrangler Addon](https://github.com/tabwrangler/tabwrangler/) (optional)
+
+# Get Started
+
+1. install requirements ```pip install -r requirements.txt```
+2. setup config.json (sample can be found here [sample.config.json](samples/sample.config.json))
+3. setup init.json (sample can be found here [sample.init.sql](samples/sample.init.sql))
 
 # Ticketmaster API
 
@@ -29,6 +36,10 @@ API to retrieve  list of available tickets of an event
 |EVENT_ID|23006130DAB40C0B|ID of  Event|
 
 ### How to get Event ID
+
+1. search for Event on ticketmaster.co.uk (e.g. [https://www.ticketmaster.co.uk/coldplay-tickets/artist/806431](https://www.ticketmaster.co.uk/coldplay-tickets/artist/806431))
+2. go to Ticket Site (e.g. [https://www.ticketmaster.co.uk/coldplay-music-of-the-spheres-world-london-22-08-2025/event/23006130DAB40C0B](https://www.ticketmaster.co.uk/coldplay-music-of-the-spheres-world-london-22-08-2025/event/23006130DAB40C0B))
+3. get Event ID (e.g. 23006130DAB40C0B) from URL
 
 ## GET Parameters
 
@@ -218,6 +229,20 @@ each object represents unique available pick for a single event at the given tim
 }
 ```
 
+# SQLite Database
+
+events, logs, picks and cookies are all written in SQLite database logs\data.db
+
+## Initialization
+
+init.sql creates data.db database and all required tables (events, cookies, logs, picks). Also it inserts all relevant information about events (ID, Artist, City, Vanue, Date)
+
+## ER Diagram
+
+![database schema](samples/db_schema.PNG)
+
+generated with [dbeaver](https://dbeaver.io/)
+
 # Configuration
 
 create config.json with following attributes:
@@ -266,10 +291,18 @@ for further sample values see [sample.config.json](sample/sample.config.json)
 
 # To-Dos
 
-- log cookies
-- bypass queue
-- add to basket
+- bypass queue / add to basket
 - implement headless browser
   - selenium
   - playwright
+- add entries to cookies_per_log table
+- Exception Hanlding / Error Logging
 - add UI to view results
+
+# Ticketmaster Troubleshooting
+
+|Error|Reason|Solution|
+|-----|------|--------|
+|Let's Get Your Identity Verified|malicious browsing behavior|resolve captcha|
+|Your Session Has Been Suspended|too many requests|automatically unsupended by ticketmaster after about 30 days|
+|Pardon the Interruption|malicious browsing behavior|n/a|
