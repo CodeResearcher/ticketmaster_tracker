@@ -4,7 +4,6 @@ import json
 import subprocess
 
 import requests
-import browser_cookie3
 from netscape_cookies import save_cookies_to_file
 
 from libs.ticketmaster_toolkit import ticketmaster_toolkit
@@ -65,17 +64,23 @@ while loop_enabled:
 
             #use cookie container
             else:
+                name_length = 0
+                for c in cookie_container:
+                    if name_length < len(c.name):
+                        name_length = len(c.name)
+
                 expires = [
-                    f"{'Cookie' : <10}{'Expires' : <19} Domain", 
-                    f"{'------' : <10}{'-------' : <19} ------"
+                    f"{'Cookie' : <{name_length + 1}}{'Expires' : <19} Domain", 
+                    f"{'------' : <{name_length + 1}}{'-------' : <19} ------"
                 ]
                 for c in cookie_container:
                     if c.expires != None:
-                        expires.append(f"{c.name : <10}{datetime.datetime.fromtimestamp(c.expires).strftime('%H:%M:%S %d.%m.%Y')} {c.domain}")
+                        expires.append(f"{c.name : <{name_length + 1}}{datetime.datetime.fromtimestamp(c.expires).strftime('%H:%M:%S %d.%m.%Y')} {c.domain}")
+
                 response = session.get(url, cookies=cookie_container)
                 response_status = response.status_code
 
-            tm.show_trace(e, response_status, failed_events, expires)
+            tm.show_trace(response_status, e, failed_events, expires)
 
             #load JSON response from request
             if response_status == 200:
@@ -85,9 +90,6 @@ while loop_enabled:
                 if 'eventId' in data:
                     del data['eventId']
                 data['status'] = response_status
-                #cookie_dict = requests.utils.dict_from_cookiejar(cookie_container)
-                #data['cookies'] = " | ".join('{}:{}'.format(key, value) for key, value in cookie_dict.items())
-                #data['expires'] = " | ".join(i for i in expires)
                 #save_cookies_to_file(session.cookies, "cookies_extract.txt")
 
             #load new tab to refresh cookies
@@ -97,7 +99,7 @@ while loop_enabled:
                 print("load new cookie session...\r")
                 subprocess.Popen([tm.firefox_executable, "-new-tab", "https://www" + tm.domain])
                 tm.wait(tm.refresh_delay)
-                cookie_container = browser_cookie3.firefox(domain_name=tm.domain)
+                cookie_container = tm.get_cookie_container()
                 print("cookies loaded successfully!")
 
             #removes event if request timeout is reached

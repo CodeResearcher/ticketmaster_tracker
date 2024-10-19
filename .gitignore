@@ -1,4 +1,5 @@
 /__pycache__
+/libs/__pycache__
 /.venv
 /.vscode
 /logs
@@ -6,7 +7,11 @@
 *.jsonl
 *.csv
 *.html
+*.db
 ToDos.md
-cookies.txt
+tracker.bat
+init.sql
 config.json
+data.db
 picks.json
+cookies.txt
